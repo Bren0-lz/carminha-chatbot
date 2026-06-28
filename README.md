@@ -43,10 +43,7 @@ car-claro/
   demo/
     email.html                # aviso do CAR (fiel ao SICAR) com botão -> WhatsApp/Carminha
     index.html                # simulador de WhatsApp da demo (motor offline embutido)
-  Roteiro_Video_CAR_Claro.pdf # roteiro do vídeo de 2 min (pronto pra ler/imprimir)
-  ROTEIRO_VIDEO.md            # mesmo roteiro, versão markdown (editável)
   README.md
-  PROGRESSO.md                # log do desenvolvimento
 ```
 
 > **Fonte da verdade do cérebro = `cerebro/cerebro.js`.** Edite o arquivo, rode os testes, e só
