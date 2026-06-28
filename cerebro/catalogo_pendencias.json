@@ -1,0 +1,44 @@
+[
+  {
+    "id": "RL_INSUFICIENTE",
+    "titulo_tecnico": "Área de Reserva Legal inferior ao mínimo legal",
+    "gatilhos": ["reserva legal", "rl ", " rl", "reserva legal insuficiente", "20%", "inferior ao minimo", "abaixo do minimo", "deficit de reserva", "rl insuficiente"],
+    "traducao": "Seu Raimundo, todo imóvel rural precisa manter um pedaço de mata em pé — e chamam isso de Reserva Legal. No seu caso, o sistema apontou que a sua área de mata está menor do que a lei pede pra sua região. Não é multa nem perda de terra: é só um ajuste pra regularizar.",
+    "como_resolver": [
+      "Confira no mapa do CAR onde está marcada a sua Reserva Legal hoje.",
+      "Você tem 3 caminhos pra completar o que falta: (1) deixar uma área da sua propriedade virar mata de novo (recuperar), (2) compensar com área de mata equivalente em outro lugar do mesmo bioma, ou (3) juntar com a Reserva de vizinhos (condomínio de reserva).",
+      "Procure a Secretaria de Meio Ambiente do seu estado ou um técnico (agrônomo/florestal) pra escolher o caminho mais barato pro seu caso.",
+      "Com o caminho escolhido, você assina um compromisso de regularização (PRA) e o prazo passa a contar — sem risco enquanto estiver cumprindo."
+    ],
+    "base_legal": "Lei 12.651/2012 (Código Florestal), arts. 12, 66 e 68 — percentuais de Reserva Legal por bioma e formas de regularização.",
+    "prazo_dias": 60
+  },
+  {
+    "id": "APP_RECOMPOR",
+    "titulo_tecnico": "Déficit de Área de Preservação Permanente (APP) — mata ciliar a recompor",
+    "gatilhos": ["app", "area de preservacao", "mata ciliar", "beira de rio", "margem do rio", "nascente", "recompor", "faixa de mata", "preservacao permanente", "olho d'agua", "olho dagua"],
+    "traducao": "Seu Raimundo, a faixa de mata na beira de rios, córregos e nascentes tem um nome: APP (Área de Preservação Permanente). O sistema viu que falta um pouco dessa mata na beira da água dentro da sua área. Isso protege a sua própria água de secar e assorear — e dá pra regularizar plantando de volta.",
+    "como_resolver": [
+      "Veja no mapa do CAR qual trecho de rio, córrego ou nascente está sem a faixa de mata.",
+      "Para imóvel pequeno (até 4 módulos fiscais), a faixa a recompor é menor — a própria lei facilita. Confirme o tamanho do seu imóvel.",
+      "Plante mudas nativas na faixa indicada ou deixe a vegetação se regenerar sozinha (cercar pra o gado não entrar já ajuda muito).",
+      "Registre que aderiu ao PRA (Programa de Regularização Ambiental) na sua Secretaria de Meio Ambiente — isso formaliza o prazo e protege você durante a recomposição."
+    ],
+    "base_legal": "Lei 12.651/2012 (Código Florestal), arts. 4º, 61-A e 61-B — APP e regras de área rural consolidada por tamanho do imóvel.",
+    "prazo_dias": 90
+  },
+  {
+    "id": "DOC_FALTANTE",
+    "titulo_tecnico": "Documentação ou georreferenciamento pendente / sobreposição a esclarecer",
+    "gatilhos": ["documento", "documentacao", "matricula", "ccir", "cpf", "sobreposicao", "falta documento", "pendencia documental", "georreferenciamento", "comprovacao", "titulo da terra"],
+    "traducao": "Seu Raimundo, dessa vez não é sobre mata: faltou um documento ou a sua área no mapa está encostando na área de um vizinho (o que chamam de sobreposição). É o tipo de pendência mais rápida de resolver — geralmente é só juntar um papel ou ajustar o desenho do mapa.",
+    "como_resolver": [
+      "Separe os documentos do imóvel: matrícula/registro, CCIR (do INCRA) e o seu CPF.",
+      "Se for sobreposição com vizinho, leve o mapa e converse — na maioria das vezes é só corrigir um ponto que ficou torto no desenho da área.",
+      "Entre no sistema do CAR (ou peça ajuda na Secretaria de Meio Ambiente / sindicato rural) e anexe o documento ou corrija o limite da área.",
+      "Guarde o protocolo de envio — é ele que comprova que você regularizou dentro do prazo."
+    ],
+    "base_legal": "Lei 12.651/2012, art. 29 (inscrição e dados do CAR) e instruções do SICAR sobre retificação e sobreposição.",
+    "prazo_dias": 30
+  }
+]

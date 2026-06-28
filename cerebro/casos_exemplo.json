@@ -1,0 +1,26 @@
+{
+  "CAR-7K3F9": {
+    "produtor": "Raimundo",
+    "imovel": "Sítio Boa Esperança - Bom Jesus do Norte/ES",
+    "pendencia_id": "RL_INSUFICIENTE",
+    "detalhe": "Reserva Legal declarada de 12%, mínimo exigido de 20% (bioma Mata Atlântica). Faltam 8%.",
+    "prazo_data": "2026-08-25",
+    "confirmacao": "123"
+  },
+  "CAR-4B8T2": {
+    "produtor": "Dona Benedita",
+    "imovel": "Chácara Água Limpa - Buritis/MG",
+    "pendencia_id": "APP_RECOMPOR",
+    "detalhe": "Faixa de mata ciliar ausente em ~120 m de margem de córrego. Imóvel com 2 módulos fiscais.",
+    "prazo_data": "2026-09-30",
+    "confirmacao": "456"
+  },
+  "CAR-9Z1Q7": {
+    "produtor": "João Pereira",
+    "imovel": "Fazenda Três Irmãos - Sorriso/MT",
+    "pendencia_id": "DOC_FALTANTE",
+    "detalhe": "Sobreposição de 0,4 ha com o imóvel vizinho a esclarecer + CCIR desatualizado.",
+    "prazo_data": "2026-07-28",
+    "confirmacao": "789"
+  }
+}

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CAR — Aviso de Pendência (e-mail)</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:#f6f8fc;color:#202124;padding:20px;}
+  .wrap{max-width:680px;margin:0 auto;}
+  .mailtop{display:flex;align-items:center;gap:8px;color:#5f6368;font-size:13px;margin-bottom:12px;}
+  /* abas de casos (so pra demo) */
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+  .tab{font-size:12.5px;border:1px solid #d3d7de;background:#fff;color:#3c4043;padding:6px 10px;border-radius:16px;cursor:pointer;}
+  .tab.active{background:#1a73e8;color:#fff;border-color:#1a73e8;}
+  .card{background:#fff;border:1px solid #e3e6ea;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+  .subject{font-size:20px;font-weight:600;padding:18px 22px 6px;color:#202124;}
+  .sender{display:flex;align-items:center;gap:12px;padding:6px 22px 16px;border-bottom:1px solid #eef0f3;}
+  .gov{width:42px;height:42px;border-radius:50%;background:#1e7d34;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0;}
+  .sender .who{font-size:14px;line-height:1.3;}
+  .sender .who b{font-weight:600;}
+  .sender .who span{color:#5f6368;font-size:12.5px;}
+  .body{padding:20px 22px;font-size:15px;line-height:1.6;color:#3c4043;}
+  .body p{margin-bottom:14px;}
+
+  /* ---- bloco "oficial" (juridiques, proposital) ---- */
+  .oficial{background:#fbfbfa;border:1px solid #e6e3da;border-radius:8px;padding:16px 18px;margin:6px 0 18px;font-size:14px;color:#3c4043;}
+  .oficial .selo{display:flex;align-items:center;gap:8px;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:#7a6f53;font-weight:700;margin-bottom:10px;}
+  .oficial .lin{display:flex;gap:8px;padding:4px 0;border-bottom:1px dashed #eee7d6;}
+  .oficial .lin:last-of-type{border-bottom:none;}
+  .oficial .k{color:#6b7280;min-width:150px;flex-shrink:0;}
+  .oficial .v{font-weight:600;color:#202124;}
+  .oficial .recibo{font-family:"Consolas",monospace;font-size:13px;}
+  .oficial .tecnico{margin-top:10px;padding-top:10px;border-top:1px solid #eee7d6;font-size:13.5px;line-height:1.55;color:#4b5563;}
+  .oficial .base{margin-top:8px;font-size:12.5px;color:#8a8170;font-style:italic;}
+  .oficial .acao{margin-top:12px;padding:10px 12px;background:#f3f1ea;border-radius:6px;font-size:13px;line-height:1.55;}
+  .oficial .acao b{color:#202124;}
+  .alerta{color:#b3261e;font-weight:700;}
+
+  /* ---- divisor antes do "resgate" da Carminha ---- */
+  .divider{display:flex;align-items:center;gap:12px;color:#9aa0a6;font-size:12.5px;margin:18px 0;}
+  .divider::before,.divider::after{content:"";flex:1;height:1px;background:#e8eaed;}
+
+  .resgate{background:#f3fbf6;border:1px solid #cdeedb;border-radius:10px;padding:16px 18px;}
+  .resgate .titu{font-weight:700;color:#13703a;font-size:15px;margin-bottom:6px;}
+  .resgate p{margin-bottom:12px;font-size:14.5px;color:#2f4f3c;}
+  .cta{display:inline-flex;align-items:center;gap:10px;background:#25d366;color:#fff;text-decoration:none;
+       font-size:16px;font-weight:600;padding:14px 22px;border-radius:30px;box-shadow:0 4px 12px rgba(37,211,102,.35);}
+  .cta:hover{background:#1ebe5b;}
+  .cta-wrap{text-align:center;margin:8px 0 4px;}
+  .codinfo{text-align:center;font-size:12.5px;color:#5f6368;margin-top:10px;}
+  .codinfo b{color:#202124;font-family:"Consolas",monospace;}
+  .hint{text-align:center;color:#5f6368;font-size:12.5px;margin-top:8px;}
+
+  .foot{padding:16px 22px;border-top:1px solid #eef0f3;color:#9aa0a6;font-size:12px;line-height:1.5;}
+  .real{max-width:680px;margin:14px auto 0;color:#9aa0a6;font-size:11.5px;text-align:center;word-break:break-all;}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="mailtop">📥 Caixa de entrada &nbsp;·&nbsp; demonstração do funil CAR → WhatsApp</div>
+    <div class="tabs" id="tabs"></div>
+
+    <div class="card">
+      <div class="subject" id="subject">Notificação — Cadastro Ambiental Rural (CAR)</div>
+      <div class="sender">
+        <div class="gov">CAR</div>
+        <div class="who">
+          <b>Central do Proprietário/Possuidor — SICAR</b><br>
+          <span>nao-responda@car.gov.br &nbsp;·&nbsp; para você</span>
+        </div>
+      </div>
+      <div class="body" id="emailBody"><!-- preenchido por JS --></div>
+      <div class="foot">
+        Esta é uma mensagem automática da Central do Proprietário/Possuidor do SICAR. Não responda a este e-mail —
+        toda a comunicação deve ser feita pela Central, em car.gov.br. Em caso de dúvida sobre a veracidade,
+        procure a Secretaria/Instituto de Meio Ambiente do seu estado.
+        <br><em>Conteúdo de demonstração — dados fictícios; estrutura baseada no fluxo real de notificação do SICAR.</em>
+      </div>
+    </div>
+    <div class="real" id="realLink"></div>
+  </div>
+
+<script>
+/* Resumo dos casos (espelho do CASOS do bot + campos do aviso oficial). */
+const CASOS = {
+  "CAR-7K3F9": {
+    produtor:"Raimundo", imovel:"Sítio Boa Esperança – Bom Jesus do Norte/ES",
+    recibo:"ES-3201605-7A3F.9C12.B45E.0D8A", titulo:"Reserva Legal abaixo do mínimo",
+    tecnico:"Área de Reserva Legal declarada inferior ao percentual mínimo de 20% estabelecido para o bioma Mata Atlântica. Necessária proposta de regularização (recomposição, compensação ou regeneração) e adesão ao Programa de Regularização Ambiental (PRA).",
+    base:"Lei nº 12.651/2012 (Código Florestal), art. 12 e art. 66.",
+    prazo:"25/08/2026", confirmacao:"123", tag:"técnico"
+  },
+  "CAR-2M5X8": {
+    produtor:"Antônio", imovel:"Fazenda Santa Rita – Sorriso/MT",
+    recibo:"MT-5107925-2M5X.8B1C.44A9.E37F", titulo:"Desmate em APP com auto de infração",
+    tecnico:"Identificada supressão de vegetação nativa em Área de Preservação Permanente (APP) sem autorização do órgão competente, com lavratura de auto de infração. Pendente apresentação de defesa/justificativa e adesão ao PRADA.",
+    base:"Lei nº 12.651/2012, art. 4º; Decreto nº 6.514/2008 (infrações ambientais).",
+    prazo:"17/07/2026", confirmacao:"321", tag:"multa", alerta:true
+  },
+  "CAR-9Z1Q7": {
+    produtor:"João Pereira", imovel:"Fazenda Três Irmãos – Sorriso/MT",
+    recibo:"MT-5107925-9Z1Q.7E22.C0AD.51B6", titulo:"Documentação/georreferenciamento pendente",
+    tecnico:"Inconsistência documental e/ou sobreposição de área detectada na análise. Necessária apresentação de matrícula/registro atualizado, CCIR e planta georreferenciada, e/ou retificação dos limites do imóvel.",
+    base:"Lei nº 12.651/2012, art. 29; instruções do SICAR (retificação e sobreposição).",
+    prazo:"28/07/2026", confirmacao:"789", tag:"prazo"
+  },
+  "CAR-4B8T2": {
+    produtor:"Dona Benedita", imovel:"Chácara Água Limpa – Buritis/MG",
+    recibo:"MG-3109709-4B8T.2F90.A1D3.6C44", titulo:"Déficit de APP / mata ciliar",
+    tecnico:"Ausência/déficit de vegetação em Área de Preservação Permanente (faixa marginal de curso d'água). Necessária recomposição da faixa, observadas as regras de área rural consolidada.",
+    base:"Lei nº 12.651/2012, art. 4º e art. 61-A.",
+    prazo:"30/09/2026", confirmacao:"456", tag:"onde"
+  }
+};
+
+// >>> Para uso REAL: coloque aqui o numero do WhatsApp Business (so digitos, com DDI).
+const WA_NUMERO = "5599999999999";
+// Pagina do "WhatsApp" (no demo, o simulador local). Em producao seria https://wa.me/<numero>
+const WA_BASE_DEMO = "index.html";
+
+function mensagemPronta(codigo, c){
+  return "Olá, Carminha! Recebi o aviso do CAR sobre o código " + codigo +
+         " (confirmação " + c.confirmacao + ") e quero entender a minha pendência.";
+}
+
+function montarHref(codigo, c){
+  const msg = mensagemPronta(codigo, c);
+  // só pré-preenche (igual ao WhatsApp real: o usuário toca em enviar)
+  return WA_BASE_DEMO + "?msg=" + encodeURIComponent(msg);
+}
+
+const params = new URLSearchParams(location.search);
+let casoAtual = params.get("caso");
+if(!CASOS[casoAtual]) casoAtual = "CAR-2M5X8"; // padrao: o cenario de multa
+
+function renderTabs(){
+  const tabs = document.getElementById("tabs");
+  tabs.innerHTML = "";
+  for(const cod in CASOS){
+    const b = document.createElement("div");
+    b.className = "tab" + (cod===casoAtual?" active":"");
+    b.textContent = cod + " · " + CASOS[cod].tag;
+    b.onclick = ()=>{ casoAtual = cod; render(); };
+    tabs.appendChild(b);
+  }
+}
+
+function render(){
+  renderTabs();
+  const c = CASOS[casoAtual];
+  const href = montarHref(casoAtual, c);
+
+  document.getElementById("subject").textContent =
+    "Notificação — Cadastro Ambiental Rural (CAR) · ação necessária";
+
+  document.getElementById("emailBody").innerHTML =
+    '<p>Prezado(a) Senhor(a) <b>'+c.produtor+'</b>,</p>'+
+    '<p>Informamos que o imóvel rural a seguir foi <b>analisado e encontra-se com pendências</b> '+
+    'no Cadastro Ambiental Rural. Para concluir a análise, é necessário apresentar documentos '+
+    'e/ou retificar as informações dentro do prazo.</p>'+
+
+    '<div class="oficial">'+
+      '<div class="selo">🏛️ Demonstrativo de Análise — SICAR</div>'+
+      '<div class="lin"><span class="k">Imóvel</span><span class="v">'+c.imovel+'</span></div>'+
+      '<div class="lin"><span class="k">Recibo de inscrição</span><span class="v recibo">'+c.recibo+'</span></div>'+
+      '<div class="lin"><span class="k">Situação</span><span class="v">Analisado com pendências, aguardando apresentação de documentos</span></div>'+
+      '<div class="lin"><span class="k">Pendência</span><span class="v">'+c.titulo+'</span></div>'+
+      '<div class="lin"><span class="k">Prazo para regularização</span><span class="v'+(c.alerta?' alerta':'')+'">60 dias — até '+c.prazo+'</span></div>'+
+      '<div class="tecnico"><b>Descrição técnica:</b> '+c.tecnico+'</div>'+
+      '<div class="base">'+c.base+'</div>'+
+      '<div class="acao">Para visualizar a notificação e responder, acesse a <b>Central do Proprietário/Possuidor</b> '+
+      'em <b>car.gov.br/#/central/acesso</b>, com seu CPF/CNPJ e senha. '+
+      'A ausência de manifestação no prazo poderá ensejar o <b>cancelamento da inscrição</b>'+
+      (c.alerta?' e o <span class="alerta">agravamento da autuação</span>':'')+'.</div>'+
+    '</div>'+
+
+    '<div class="divider">não entendeu o que isso quer dizer?</div>'+
+
+    '<div class="resgate">'+
+      '<div class="titu">A Carminha explica em 1 minuto, no seu WhatsApp 🌱</div>'+
+      '<p>Sabemos que esses termos são confusos. A <b>Carminha</b> traduz a sua pendência em '+
+      'linguagem simples e te guia no passo a passo — sem precisar acessar sistemas nem entender juridiquês.</p>'+
+      '<div class="cta-wrap"><a class="cta" href="'+href+'" target="_blank" rel="noopener">💬 Resolver com a Carminha</a></div>'+
+      '<div class="codinfo">Código de atendimento: <b>'+casoAtual+'</b> &nbsp;·&nbsp; confirmação: <b>'+c.confirmacao+'</b></div>'+
+      '<div class="hint">Ao clicar, o WhatsApp abre com a mensagem <b>já preenchida</b>. É só tocar em enviar.</div>'+
+    '</div>';
+
+  // mostra como ficaria o link REAL de WhatsApp (producao)
+  const real = "https://wa.me/"+WA_NUMERO+"?text="+encodeURIComponent(mensagemPronta(casoAtual,c));
+  document.getElementById("realLink").innerHTML =
+    "Em produção, o botão apontaria para o número real:<br>"+real;
+}
+
+render();
+</script>
+</body>
+</html>

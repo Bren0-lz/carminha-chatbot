@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Carminha — Demo (WhatsApp)</title>
+<style>
+  :root{
+    --wa-header:#075e54; --wa-header2:#0b6b5f; --wa-panel:#f0f2f5;
+    --wa-bg:#efeae2; --out:#d9fdd3; --in:#ffffff; --tick:#53bdeb;
+    --txt:#111b21; --muted:#667781;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased;}
+  body{
+    font-family:"Segoe UI",Helvetica,Arial,sans-serif;
+    background:#0a0e11;display:flex;align-items:center;justify-content:center;
+    min-height:100vh;padding:14px;
+  }
+  .phone{
+    width:100%;max-width:420px;height:91vh;max-height:880px;
+    display:flex;flex-direction:column;border-radius:12px;overflow:hidden;
+    box-shadow:0 12px 44px rgba(0,0,0,.6);background:var(--wa-bg);position:relative;
+  }
+  /* ===== header ===== */
+  .header{
+    background:var(--wa-header);color:#fff;display:flex;align-items:center;
+    gap:3px;padding:7px 6px;flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,.25);z-index:2;
+  }
+  .iconbtn{width:34px;height:34px;display:flex;align-items:center;justify-content:center;
+    color:#fff;cursor:pointer;border-radius:50%;flex-shrink:0;opacity:.95;}
+  .iconbtn:hover{background:rgba(255,255,255,.12);}
+  .iconbtn svg{width:21px;height:21px;}
+  .iconbtn.back svg{width:24px;height:24px;}
+  .avatar{
+    width:38px;height:38px;border-radius:50%;flex-shrink:0;margin:0 2px;
+    background:linear-gradient(135deg,#28d36c,#0a8d4d);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .avatar svg{width:22px;height:22px;color:#fff;}
+  .header .info{flex:1;min-width:0;margin-left:2px;line-height:1.2;}
+  .header .name{font-weight:600;font-size:16px;}
+  .header .status{font-size:12.5px;opacity:.9;}
+  .header .actions{display:flex;align-items:center;}
+  /* ===== chat ===== */
+  .chat{
+    flex:1;overflow-y:auto;padding:10px 6% 14px;display:flex;flex-direction:column;gap:1px;
+    background-color:var(--wa-bg);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='110' height='110'%3E%3Cg fill='none' stroke='%23000' stroke-opacity='0.035' stroke-width='2'%3E%3Ccircle cx='18' cy='20' r='6'/%3E%3Cpath d='M58 14c6-6 14 0 7 7c-7 7-14-1-7-7z'/%3E%3Cpath d='M90 26l9 0M94.5 21.5l0 9'/%3E%3Cpath d='M16 70q9-7 18 0'/%3E%3Cpath d='M44 60l9 9M53 60l-9 9'/%3E%3Cpath d='M78 64c5-5 12 0 6 6c-6 6-12-1-6-6z'/%3E%3Ccircle cx='98' cy='92' r='6'/%3E%3Cpath d='M20 98q8 6 16 0'/%3E%3Cpath d='M58 92l9 0M62.5 87.5l0 9'/%3E%3C/g%3E%3C/svg%3E");
+    background-size:300px;
+  }
+  .row{display:flex;width:100%;margin-top:2px;}
+  .row.in{justify-content:flex-start;}
+  .row.out{justify-content:flex-end;}
+  .bubble{
+    max-width:80%;padding:6px 8px 8px;border-radius:7.5px;font-size:14.2px;
+    line-height:1.34;color:var(--txt);position:relative;
+    box-shadow:0 1px .5px rgba(11,20,26,.13);white-space:pre-wrap;word-wrap:break-word;
+  }
+  .in .bubble{background:var(--in);}
+  .out .bubble{background:var(--out);}
+  /* rabinho (só no 1º balão de um grupo) */
+  .in.tail .bubble{border-top-left-radius:0;}
+  .out.tail .bubble{border-top-right-radius:0;}
+  .in.tail .bubble::before{content:"";position:absolute;top:0;left:-8px;
+    border-style:solid;border-width:0 8px 8px 0;border-color:transparent var(--in) transparent transparent;}
+  .out.tail .bubble::before{content:"";position:absolute;top:0;right:-8px;
+    border-style:solid;border-width:0 0 8px 8px;border-color:transparent transparent transparent var(--out);}
+  .bubble .meta{
+    font-size:11px;color:var(--muted);float:right;margin:9px 0 -3px 12px;
+    display:inline-flex;align-items:center;gap:3px;position:relative;top:2px;
+  }
+  .bubble .meta svg{width:16px;height:15px;display:block;}
+  .bubble strong{font-weight:600;}
+  /* ===== pills ===== */
+  .pill{
+    align-self:center;background:#fff;color:#54656f;font-size:12px;font-weight:500;
+    padding:5px 12px;border-radius:8px;margin:8px 0 5px;box-shadow:0 1px .5px rgba(11,20,26,.13);
+    text-transform:uppercase;letter-spacing:.4px;
+  }
+  .enc{
+    align-self:center;max-width:90%;text-align:center;background:#ffeecf;color:#54656f;
+    font-size:11.5px;line-height:1.4;padding:6px 14px;border-radius:8px;margin:0 0 8px;
+    box-shadow:0 1px .5px rgba(11,20,26,.13);
+  }
+  /* ===== typing ===== */
+  .typing .bubble{display:flex;gap:4px;padding:11px 12px;}
+  .typing .dot{width:7px;height:7px;border-radius:50%;background:#9aa6ac;animation:bl 1.2s infinite;}
+  .typing .dot:nth-child(2){animation-delay:.2s;}
+  .typing .dot:nth-child(3){animation-delay:.4s;}
+  @keyframes bl{0%,60%,100%{opacity:.35;transform:translateY(0);}30%{opacity:1;transform:translateY(-3px);}}
+  /* ===== input bar ===== */
+  .inputbar{
+    display:flex;align-items:center;gap:7px;padding:7px 9px 9px;background:var(--wa-panel);flex-shrink:0;
+  }
+  .inputwrap{
+    flex:1;display:flex;align-items:center;gap:2px;background:#fff;border-radius:24px;
+    padding:3px 6px;box-shadow:0 1px .5px rgba(11,20,26,.1);
+  }
+  .inputwrap .ic{width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+    color:#54656f;cursor:pointer;flex-shrink:0;}
+  .inputwrap .ic svg{width:24px;height:24px;}
+  .inputwrap input{flex:1;border:none;outline:none;font-size:15px;padding:7px 4px;background:transparent;color:#111b21;}
+  .inputwrap input::placeholder{color:#8696a0;}
+  .send{
+    width:46px;height:46px;border:none;border-radius:50%;background:var(--wa-header);
+    color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .send svg{width:23px;height:23px;}
+  .send:active{filter:brightness(.9);}
+  .send.pulse{animation:pulse 1.15s infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(7,94,84,.55);}70%{box-shadow:0 0 0 13px rgba(7,94,84,0);}100%{box-shadow:0 0 0 0 rgba(7,94,84,0);}}
+  .chat::-webkit-scrollbar{width:6px;height:0;}
+  .chat::-webkit-scrollbar-thumb{background:rgba(0,0,0,.16);border-radius:3px;}
+</style>
+</head>
+<body>
+  <div class="phone">
+    <div class="header">
+      <div class="iconbtn back"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"/></svg></div>
+      <div class="avatar"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z"/></svg></div>
+      <div class="info">
+        <div class="name">Carminha</div>
+        <div class="status" id="status">online</div>
+      </div>
+      <div class="actions">
+        <div class="iconbtn"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11z"/></svg></div>
+        <div class="iconbtn"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a1 1 0 0 0-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66a1 1 0 0 0 .25-1.01c-.37-1.11-.56-2.3-.56-3.53a1 1 0 0 0-1-1H4.19a1 1 0 0 0-1 1c0 9.39 7.61 17 17 17a1 1 0 0 0 1-1v-3.32a1 1 0 0 0-1-1z"/></svg></div>
+        <div class="iconbtn"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></div>
+      </div>
+    </div>
+
+    <div class="chat" id="chat">
+      <div class="pill">Hoje</div>
+      <div class="enc">🔒 As mensagens são protegidas com a criptografia de ponta a ponta.</div>
+    </div>
+
+    <div class="inputbar">
+      <div class="inputwrap">
+        <div class="ic" title="Emoji"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/></svg></div>
+        <input id="msg" type="text" placeholder="Mensagem" autocomplete="off" />
+        <div class="ic" title="Anexar"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M16.5 6v11.5a4 4 0 0 1-8 0V5a2.5 2.5 0 0 1 5 0v10.5a1 1 0 0 1-2 0V6H10v9.5a2.5 2.5 0 0 0 5 0V5a4 4 0 0 0-8 0v12.5a5.5 5.5 0 0 0 11 0V6z"/></svg></div>
+        <div class="ic" title="Câmera"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M9 2 7.17 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3.17L15 2zm3 15a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg></div>
+      </div>
+      <button class="send" id="send" title="Enviar"></button>
+    </div>
+  </div>
+
+<script>
+/* ============================================================
+ *  CEREBRO CAR Claro — MESMA logica do Code node do n8n.
+ *  (mantido em sincronia com o node "Cerebro CAR Claro",
+ *   workflow TOlW6dfcoMQ93ZEL). Funcao pura processar().
+ * ============================================================ */
+const CATALOGO = [
+  {
+    id: "RL_INSUFICIENTE",
+    titulo_tecnico: "Área de Reserva Legal inferior ao mínimo legal",
+    gatilhos: ["reserva legal", "rl ", " rl", "reserva legal insuficiente", "20%", "inferior ao minimo", "abaixo do minimo", "deficit de reserva", "rl insuficiente"],
+    traducao: "todo imóvel rural precisa manter um pedaço de mata em pé — é o que chamam de Reserva Legal. O sistema viu que a sua mata está menor do que a lei pede pra sua região. Não é multa nem perda de terra: é só um acerto pra deixar tudo certo.",
+    como_resolver: [
+      "Olhe no mapa do CAR onde está marcada a sua Reserva Legal hoje.",
+      "Pra completar o que falta, você tem 3 caminhos: (1) deixar um pedaço da sua terra virar mata de novo; (2) usar uma mata do mesmo tipo em outro lugar pra contar no lugar dessa; ou (3) juntar a sua reserva com a de um vizinho.",
+      "Procure a Secretaria de Meio Ambiente do seu estado ou um técnico (agrônomo) pra ver qual caminho sai mais barato pro seu caso.",
+      "Escolhido o caminho, você assina o PRA — um acordo com o governo pra ir consertando aos poucos. A partir daí o prazo começa a contar, e você fica tranquilo enquanto cumpre."
+    ],
+    base_legal: "Lei 12.651/2012 (Código Florestal), arts. 12, 66 e 68.",
+    prazo_dias: 60,
+    precisa_tecnico: { resposta: true, texto: "Sim. Pra escolher o melhor caminho (replantar, usar outra área ou juntar com vizinho), um agrônomo ou engenheiro florestal ajuda a achar o mais barato pro seu caso." },
+    gera_multa: { resposta: false, texto: "Não é multa, é só um acerto pra deixar tudo certo. Só vira problema se você deixar o prazo passar." },
+    onde_resolver: "Na Secretaria de Meio Ambiente do seu estado, ou com um técnico (agrônomo). O acordo (PRA) é feito por lá."
+  },
+  {
+    id: "APP_RECOMPOR",
+    titulo_tecnico: "Déficit de Área de Preservação Permanente (APP) — mata ciliar a recompor",
+    gatilhos: ["app", "area de preservacao", "mata ciliar", "beira de rio", "margem do rio", "nascente", "recompor", "faixa de mata", "preservacao permanente", "olho d'agua", "olho dagua"],
+    traducao: "a faixa de mata na beira de rio, córrego ou nascente tem um nome: APP (Área de Preservação Permanente). O sistema viu que falta um pouco dessa mata na beira da água, na sua terra. Ela protege a sua própria água de secar e de encher de barro — e dá pra resolver replantando.",
+    como_resolver: [
+      "Veja no mapa do CAR qual beira de rio, córrego ou nascente está sem a faixa de mata.",
+      "Se o seu imóvel é pequeno, a faixa pra replantar é menor — a lei facilita pra quem tem pouca terra. Vale confirmar o tamanho da sua área.",
+      "Plante mudas nativas na faixa, ou deixe o mato nascer de novo sozinho (cercar pra o gado não entrar já ajuda muito).",
+      "Avise na Secretaria de Meio Ambiente que você entrou no PRA (o acordo de regularização). Isso garante o seu prazo e te protege enquanto a mata cresce."
+    ],
+    base_legal: "Lei 12.651/2012 (Código Florestal), arts. 4º, 61-A e 61-B.",
+    prazo_dias: 90,
+    precisa_tecnico: { resposta: false, texto: "Não precisa. Dá pra plantar mudas nativas ou deixar o mato nascer sozinho. Um técnico ajuda a fazer mais rápido e certo, mas você consegue começar sem ele." },
+    gera_multa: { resposta: false, texto: "Não é multa. É só replantar a faixa de mata; fazendo dentro do prazo, fica tudo certo." },
+    onde_resolver: "Na Secretaria de Meio Ambiente, no sindicato rural (costuma ser de graça), ou no próprio sistema do CAR pra entrar no PRA."
+  },
+  {
+    id: "DOC_FALTANTE",
+    titulo_tecnico: "Documentação ou georreferenciamento pendente / sobreposição a esclarecer",
+    gatilhos: ["documento", "documentacao", "matricula", "ccir", "cpf", "sobreposicao", "falta documento", "pendencia documental", "georreferenciamento", "comprovacao", "titulo da terra"],
+    traducao: "dessa vez não é sobre mata: faltou um documento, ou a sua área no mapa está encostando na do vizinho (o que chamam de sobreposição). É a pendência mais rápida de resolver — quase sempre é só juntar um papel ou ajustar o desenho do mapa.",
+    como_resolver: [
+      "Separe os documentos do imóvel: a matrícula (registro em cartório), o CCIR (o documento da terra, do INCRA) e o seu CPF.",
+      "Se a sua área estiver encostando na do vizinho, leve o mapa e converse — quase sempre é só corrigir um ponto que ficou torto no desenho.",
+      "Entre no sistema do CAR (ou peça ajuda na Secretaria de Meio Ambiente ou no sindicato rural) e anexe o documento ou conserte o limite da área.",
+      "Guarde o comprovante de envio — é ele que mostra que você resolveu dentro do prazo."
+    ],
+    base_legal: "Lei 12.651/2012, art. 29 e instruções do SICAR.",
+    prazo_dias: 30,
+    precisa_tecnico: { resposta: false, texto: "Quase nunca. Em geral é só juntar um documento ou ajustar o mapa — você mesmo consegue, ou o sindicato rural te ajuda." },
+    gera_multa: { resposta: false, texto: "Não gera multa. É só uma papelada faltando; resolvendo dentro do prazo, fica tudo certo." },
+    onde_resolver: "No sistema do CAR (pra anexar o documento ou consertar o mapa), ou na Secretaria de Meio Ambiente / sindicato rural pra te ajudarem."
+  },
+  {
+    id: "DESMATE_APP_AUTUADO",
+    titulo_tecnico: "Supressão de vegetação em APP sem autorização — auto de infração lavrado",
+    gatilhos: ["desmatamento", "desmate", "auto de infracao", "multa", "embargo", "supressao", "corte de mata", "infracao ambiental"],
+    traducao: "dessa vez é mais sério: o sistema apontou que foi tirada mata de uma área protegida (APP) sem autorização, e já tem um auto de infração (a notificação oficial da multa) no seu imóvel. Isso pode, sim, dar multa — mas dá pra resolver, e quem corre atrás cedo costuma pagar menos e evitar que aumente.",
+    como_resolver: [
+      "Não tire mais nenhuma mata dessa área — o governo mandou parar (área embargada), e continuar só piora.",
+      "Procure logo a Secretaria de Meio Ambiente do seu estado (ou quem te notificou), com o número da notificação em mãos.",
+      "Entre no PRA (o acordo de regularização) e leve um plano pra recuperar a área. Isso costuma diminuir a multa.",
+      "Vale procurar um advogado e um técnico ambiental pra montar esse plano."
+    ],
+    base_legal: "Lei 12.651/2012; Lei 9.605/1998 (Crimes Ambientais); Decreto 6.514/2008 (sanções).",
+    prazo_dias: 20,
+    precisa_tecnico: { resposta: true, texto: "Sim. Vale um técnico ambiental pra montar o plano de recuperação e, se der, a ajuda de um advogado por causa da notificação." },
+    gera_multa: { resposta: true, texto: "Sim, esse caso já tem auto de infração e pode dar multa. A boa notícia: entrar no PRA e recuperar a área costuma diminuir o valor e evita que aumente." },
+    onde_resolver: "Na Secretaria de Meio Ambiente do estado ou em quem te notificou (leve o número da notificação). O sindicato rural também pode orientar."
+  }
+];
+
+const CASOS = {
+  "CAR-7K3F9": { produtor: "Raimundo", imovel: "Sítio Boa Esperança - Bom Jesus do Norte/ES", pendencia_id: "RL_INSUFICIENTE", detalhe: "Sua mata é de 12% da área, e a lei pede 20% (região de Mata Atlântica). Falta 8%.", prazo_data: "2026-08-25", confirmacao: "123" },
+  "CAR-4B8T2": { produtor: "Dona Benedita", imovel: "Chácara Água Limpa - Buritis/MG", pendencia_id: "APP_RECOMPOR", detalhe: "Falta a faixa de mata em uns 120 m de beira de córrego. Imóvel pequeno (2 módulos fiscais).", prazo_data: "2026-09-30", confirmacao: "456" },
+  "CAR-9Z1Q7": { produtor: "João Pereira", imovel: "Fazenda Três Irmãos - Sorriso/MT", pendencia_id: "DOC_FALTANTE", detalhe: "A sua área está encostando uns 0,4 hectare na do vizinho (precisa esclarecer), e o CCIR (documento da terra) está desatualizado.", prazo_data: "2026-07-28", confirmacao: "789" },
+  "CAR-2M5X8": { produtor: "Antônio", imovel: "Fazenda Santa Rita - Sorriso/MT", pendencia_id: "DESMATE_APP_AUTUADO", detalhe: "Foi tirada mata de uns 3,2 hectares de beira d'água (APP), sem autorização. Notificação nº 1234/2026, e a área está embargada (proibido mexer).", prazo_data: "2026-07-17", confirmacao: "321" }
+};
+
+const NOME_BOT = "Carminha";
+
+function normalizar(texto) {
+  return String(texto || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").trim();
+}
+function acharPendencia(id) { return CATALOGO.find(function (p) { return p.id === id; }) || null; }
+
+function detectarCodigo(entrada) {
+  const compacto = String(entrada || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+  for (const codigo in CASOS) {
+    if (compacto.indexOf(codigo.replace(/[^A-Z0-9]/g, "")) !== -1) return codigo;
+  }
+  return null;
+}
+function contemConfirmacao(entrada, conf) {
+  const nums = String(entrada || "").match(/\d{3,}/g) || [];
+  return nums.indexOf(String(conf)) !== -1;
+}
+function identificarPorTexto(entrada) {
+  const t = " " + normalizar(entrada) + " ";
+  let melhor = null, melhorScore = 0;
+  for (const p of CATALOGO) {
+    let score = 0;
+    for (const g of p.gatilhos) { const gn = normalizar(g); if (gn && t.indexOf(gn) !== -1) score += 1; }
+    if (score > melhorScore) { melhorScore = score; melhor = p; }
+  }
+  return melhorScore > 0 ? melhor : null;
+}
+function dataBR(iso) {
+  if (!iso) return "";
+  const m = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return m ? (m[3] + "/" + m[2] + "/" + m[1]) : String(iso);
+}
+function blocoComoResolver(pendencia) {
+  const linhas = pendencia.como_resolver.map(function (passo, i) { return (i + 1) + ") " + passo; });
+  return "Tá bom, vou te explicar com calma — é mais tranquilo do que parece:\n" + linhas.join("\n") + "\n\nSe ficar com dúvida em algum passo, é só me perguntar. 🙂";
+}
+function blocoOpcoes() {
+  return "Como você quer seguir? Posso te explicar como resolver, falar do prazo, dizer se precisa de um técnico, ou onde procurar ajuda. É só me dizer com as suas palavras. 🙂";
+}
+function maisAlgo() {
+  return "Quer saber mais alguma coisa? Tô aqui pra te ajudar. 🙂";
+}
+function menuInicial() {
+  return "Olá! Eu sou a " + NOME_BOT + ", sua ajudante do CAR. 🌱\n" +
+    "Vou te ajudar a entender e resolver a pendência do seu Cadastro Ambiental Rural, em linguagem simples.\n\n" +
+    "Você pode:\n" +
+    "• Digitar o *código* que veio no seu aviso (ex.: CAR-7K3F9), ou\n" +
+    "• *Colar o texto* da pendência que apareceu pra você.";
+}
+function entregarPendencia(pendencia, dadosCaso) {
+  const respostas = [];
+  if (dadosCaso) {
+    respostas.push("Achei aqui, " + dadosCaso.produtor + ". 🙂 Vou te ajudar com isso, com calma.");
+  }
+  let msg = "Olha só, " + pendencia.traducao;
+  if (dadosCaso && dadosCaso.detalhe) { msg += "\n\nNo seu caso: " + dadosCaso.detalhe; }
+  respostas.push(msg);
+  respostas.push(blocoOpcoes());
+  return respostas;
+}
+
+function processar(entrada, estado) {
+  if (!estado || !estado.etapa) { estado = { etapa: "INICIO" }; }
+  const txt = normalizar(entrada);
+
+  if (txt === "menu" || txt === "recomecar" || txt === "reiniciar" || txt === "voltar") {
+    return { respostas: [menuInicial()], estado: { etapa: "INICIO" } };
+  }
+
+  if (estado.etapa === "AGUARDA_CONFIRMACAO") {
+    const caso = CASOS[estado.codigo];
+    if (!caso) { return { respostas: [menuInicial()], estado: { etapa: "INICIO" } }; }
+    if (txt === normalizar(caso.confirmacao)) {
+      const pendencia = acharPendencia(caso.pendencia_id);
+      return { respostas: entregarPendencia(pendencia, caso), estado: { etapa: "IDENTIFICADO", pendencia_id: pendencia.id, codigo: estado.codigo } };
+    }
+    return { respostas: ["Hmm, esses números não bateram. 🤔 Digite os *3 números* que vieram junto com o seu código (no aviso/e-mail). Ou digite *menu* pra recomeçar."], estado: estado };
+  }
+
+  if (estado.etapa === "IDENTIFICADO") {
+    const pendencia = acharPendencia(estado.pendencia_id);
+    const caso = CASOS[estado.codigo];
+
+    if (txt === "1" || txt.indexOf("passo") !== -1 || txt.indexOf("como faco") !== -1 ||
+        (txt.indexOf("como") !== -1 && txt.indexOf("resolv") !== -1)) {
+      return { respostas: [blocoComoResolver(pendencia)], estado: estado };
+    }
+    if (txt === "2" || txt.indexOf("tecnico") !== -1 || txt.indexOf("agronomo") !== -1 ||
+        txt.indexOf("engenheiro") !== -1 || txt.indexOf("sozinho") !== -1 || txt.indexOf("ajuda") !== -1) {
+      const pt = pendencia.precisa_tecnico;
+      const corpo = pt ? pt.texto : "Procure a Secretaria de Meio Ambiente do seu estado ou o sindicato rural — costuma ter atendimento de graça.";
+      return { respostas: [corpo, maisAlgo()], estado: estado };
+    }
+    if (txt.indexOf("multa") !== -1 || txt.indexOf("multado") !== -1 ||
+        txt.indexOf("infrac") !== -1 || txt.indexOf("autua") !== -1) {
+      const gm = pendencia.gera_multa;
+      const corpo = gm ? gm.texto : "Esse tipo de pendência costuma ser só um acerto, não uma multa — desde que você resolva dentro do prazo.";
+      return { respostas: [corpo, maisAlgo()], estado: estado };
+    }
+    if (txt === "3" || txt.indexOf("prazo") !== -1 || txt.indexOf("lembr") !== -1 ||
+        txt.indexOf("ate quando") !== -1 || txt.indexOf("quando") !== -1 ||
+        txt.indexOf("vence") !== -1 || txt.indexOf("data") !== -1 || txt.indexOf("tempo") !== -1) {
+      const quando = caso && caso.prazo_data ? ("até " + dataBR(caso.prazo_data)) : ("em uns " + pendencia.prazo_dias + " dias");
+      return {
+        respostas: [
+          "Seu prazo é *" + quando + "*. 🙂\n" +
+          "Dentro do prazo você fica tranquilo. Se deixar passar é que complica. Mas dá tempo de resolver, viu?",
+          maisAlgo()
+        ],
+        estado: estado
+      };
+    }
+    if (txt.indexOf("onde") !== -1 || txt.indexOf("aonde") !== -1 || txt.indexOf("lugar") !== -1 ||
+        txt.indexOf("local") !== -1 || txt.indexOf("resolv") !== -1 || txt.indexOf("procurar") !== -1) {
+      const onde = pendencia.onde_resolver || "Na Secretaria de Meio Ambiente do seu estado ou no sindicato rural (costuma ter atendimento de graça).";
+      return { respostas: ["Você resolve assim: " + onde, maisAlgo()], estado: estado };
+    }
+
+    const reidentificado = roteamentoInicial(entrada);
+    if (reidentificado) return reidentificado;
+    return { respostas: ["Hmm, não tenho certeza se entendi. 🙂 Pode me contar de outro jeito, com as suas palavras?"], estado: estado };
+  }
+
+  if (!txt || txt === "oi" || txt === "ola" || txt === "ola!" || txt === "bom dia" || txt === "boa tarde" || txt === "boa noite" || txt === "ajuda" || txt === "start") {
+    return { respostas: [menuInicial()], estado: { etapa: "INICIO" } };
+  }
+
+  const roteado = roteamentoInicial(entrada);
+  if (roteado) return roteado;
+
+  return {
+    respostas: ["Não consegui entender a sua pendência ainda. 😕\nTente *colar o texto* exatamente como apareceu, ou digite o *código* do aviso (ex.: CAR-7K3F9).\nSe preferir, digite *menu*."],
+    estado: { etapa: "INICIO" }
+  };
+}
+
+function roteamentoInicial(entrada) {
+  const codigo = detectarCodigo(entrada);
+  if (codigo) {
+    const caso = CASOS[codigo];
+    if (caso && contemConfirmacao(entrada, caso.confirmacao)) {
+      const pendencia = acharPendencia(caso.pendencia_id);
+      return { respostas: entregarPendencia(pendencia, caso), estado: { etapa: "IDENTIFICADO", pendencia_id: pendencia.id, codigo: codigo } };
+    }
+    return {
+      respostas: ["Achei o cadastro ligado ao código *" + codigo + "*. 🔒\nPra proteger seus dados, me confirme os *3 números* que vieram junto com o código no seu aviso."],
+      estado: { etapa: "AGUARDA_CONFIRMACAO", codigo: codigo }
+    };
+  }
+  const pendencia = identificarPorTexto(entrada);
+  if (pendencia) {
+    return { respostas: entregarPendencia(pendencia, null), estado: { etapa: "IDENTIFICADO", pendencia_id: pendencia.id } };
+  }
+  return null;
+}
+
+/* ===================== UI (WhatsApp) ===================== */
+const chat=document.getElementById("chat");
+const input=document.getElementById("msg");
+const sendBtn=document.getElementById("send");
+const statusEl=document.getElementById("status");
+
+/* ---- Conexao com o n8n (bot real) ---- */
+const N8N_URL="http://localhost:5678/webhook/car-claro";
+const SESSION_ID="wa-"+Date.now()+"-"+Math.random().toString(36).slice(2,8);
+let modoLocal=false;        // vira true se o n8n nao responder (fallback)
+let statusBase="online";
+let estado;                 // memoria local (usada so no fallback)
+
+function agora(){
+  const d=new Date();
+  return ("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2);
+}
+function escapeHtml(s){
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+// *negrito* do WhatsApp -> <strong>, quebra de linha -> <br>
+function formatar(s){
+  return escapeHtml(s).replace(/\*([^*\n]+)\*/g,"<strong>$1</strong>").replace(/\n/g,"<br>");
+}
+const TICK_SVG='<svg viewBox="0 0 18 18"><path fill="#53bdeb" d="M17.4 5.05l-.57-.44a.43.43 0 0 0-.61.07l-6.39 8.2a.38.38 0 0 1-.58.04l-.42-.39a.38.38 0 0 0-.58.04l-.45.58a.5.5 0 0 0 .04.64l1.57 1.51a.38.38 0 0 0 .58-.04l7.48-9.6a.44.44 0 0 0-.07-.61zm-4.89 0l-.57-.44a.43.43 0 0 0-.61.07l-6.39 8.2a.38.38 0 0 1-.58.04L1.75 10.4a.44.44 0 0 0-.61 0l-.51.52a.44.44 0 0 0 0 .61l3.89 3.8a.38.38 0 0 0 .58-.04l7.48-9.6a.44.44 0 0 0-.07-.61z"/></svg>';
+let lastSide=null;
+function addBubble(texto,lado){
+  const row=document.createElement("div");
+  row.className="row "+lado+(lado!==lastSide?" tail":"");
+  lastSide=lado;
+  const tick = lado==="out" ? TICK_SVG : '';
+  row.innerHTML='<div class="bubble">'+formatar(texto)+
+    '<span class="meta">'+agora()+tick+'</span></div>';
+  chat.appendChild(row);
+  chat.scrollTop=chat.scrollHeight;
+  return row;
+}
+function showTyping(){
+  const row=document.createElement("div");
+  row.className="row in typing"+("in"!==lastSide?" tail":"");
+  row.innerHTML='<div class="bubble"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>';
+  chat.appendChild(row); chat.scrollTop=chat.scrollHeight;
+  return row;
+}
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+async function responder(respostas){
+  for(const r of respostas){
+    statusEl.textContent="digitando…";
+    const t=showTyping();
+    await sleep(Math.min(1100, 350 + r.length*7));
+    t.remove();
+    addBubble(r,"in");
+    statusEl.textContent=statusBase;
+    await sleep(200);
+  }
+}
+
+// Chama o bot REAL no n8n; se falhar, cai pro motor local (mesma logica).
+async function obterRespostas(texto){
+  if(!modoLocal){
+    try{
+      const resp=await fetch(N8N_URL,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({chatInput:texto,sessionId:SESSION_ID})
+      });
+      if(!resp.ok) throw new Error("HTTP "+resp.status);
+      const data=await resp.json();
+      const out=(data&&(data.output!=null?data.output:data.text))||"";
+      // quebra a mensagem do bot em baloes (estilo WhatsApp)
+      return String(out).split(/\n{2,}/).filter(s=>s.trim().length);
+    }catch(e){
+      console.warn("n8n indisponível — usando motor local:",e);
+      modoLocal=true; estado=undefined;
+      statusBase="online · modo local";
+      statusEl.textContent=statusBase;
+    }
+  }
+  const r=processar(texto,estado);
+  estado=r.estado;
+  return r.respostas;
+}
+
+let ocupado=false;
+async function enviar(texto){
+  texto=(texto||"").trim();
+  if(!texto||ocupado) return;
+  ocupado=true;
+  addBubble(texto,"out");
+  input.value=""; updateSendIcon();
+  const respostas=await obterRespostas(texto);
+  await responder(respostas);
+  ocupado=false;
+  input.focus();
+}
+
+// botao alterna entre microfone (vazio) e enviar (com texto), igual ao WhatsApp
+const MIC_SVG='<svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5-3c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92z"/></svg>';
+const SEND_SVG='<svg viewBox="0 0 24 24"><path fill="currentColor" d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"/></svg>';
+function updateSendIcon(){ sendBtn.innerHTML = input.value.trim() ? SEND_SVG : MIC_SVG; }
+updateSendIcon();
+
+sendBtn.addEventListener("click",()=>enviar(input.value));
+input.addEventListener("input",updateSendIcon);
+input.addEventListener("keydown",e=>{ if(e.key==="Enter") enviar(input.value); });
+
+// mensagem inicial + deep link (?msg=... vindo do e-mail/WhatsApp)
+window.addEventListener("load",async()=>{
+  await sleep(400);
+  await responder(["Olá! Eu sou a Carminha, sua ajudante do CAR. 🌱\nDigite o código que veio no seu aviso (ex.: CAR-7K3F9) ou cole o texto da pendência."]);
+  estado={etapa:"INICIO"};
+
+  // mensagem pre-pronta na URL: ?msg=... (igual ao wa.me/<num>?text=...)
+  const params=new URLSearchParams(location.search);
+  const pre=params.get("msg")||params.get("text");
+  if(pre){
+    input.value=pre; updateSendIcon();   // deixa digitada, igual o WhatsApp faz
+    sendBtn.classList.add("pulse");  // chama atencao pro botao enviar
+    input.addEventListener("input",()=>sendBtn.classList.remove("pulse"),{once:true});
+  }
+  input.focus();
+});
+</script>
+</body>
+</html>
