@@ -1,6 +1,6 @@
 # CAR Claro · Carminha 🌱
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Licença](https://img.shields.io/badge/Licen%C3%A7a-Todos%20os%20direitos%20reservados-red)](LICENSE)
 ![n8n](https://img.shields.io/badge/n8n-workflow-EA4B71)
 ![Node](https://img.shields.io/badge/Node.js-test%20puro-339933)
 ![Status](https://img.shields.io/badge/golden%20path-validado%20ao%20vivo-success)
@@ -27,10 +27,33 @@ com `[IA-FUTURO]`.
 
 ---
 
+## Comprovação de experiência
+
+| | |
+|---|---|
+| **Autor** | Breno Luiz Silva do Carmo — único autor de todos os commits deste repositório |
+| **Tipo** | Item de portfólio de autoria própria (MVP de chatbot com automação n8n + demo web) |
+| **Data de publicação** | 28/06/2026 |
+| **Verificação** | `node cerebro/testes/testar_cerebro.mjs` → `Passou: 23  Falhou: 0` (Node puro, sem dependências) |
+
+### Competências técnicas evidenciadas
+
+| Competência | Onde verificar neste repositório |
+|---|---|
+| **Testes automatizados** | [`cerebro/testes/testar_cerebro.mjs`](cerebro/testes/testar_cerebro.mjs) — 23 casos cobrindo as duas portas de entrada, confirmação de identidade, isolamento de sessão, fallback e reset |
+| **Arquitetura de software** | [`cerebro/cerebro.js`](cerebro/cerebro.js) — função pura `processar(entrada, estado)`: a mesma lógica roda no teste, no n8n e na demo offline |
+| **Automação / build** | [`workflows/build_workflow.mjs`](workflows/build_workflow.mjs) gera o workflow do n8n a partir do código-fonte, em vez de editá-lo à mão |
+| **Desenvolvimento web (front-end)** | [`demo/index.html`](demo/index.html) — simulador de WhatsApp com motor embutido; [`demo/email.html`](demo/email.html) — aviso do CAR com chamada para o bot |
+| **Design e prototipagem de interfaces** | Fluxo conversacional desenhado para uma persona de baixa familiaridade digital (*Seu Raimundo*), linguagem sem juridiquês |
+| **Modelagem de dados** | [`cerebro/catalogo_pendencias.json`](cerebro/catalogo_pendencias.json) e [`cerebro/casos_exemplo.json`](cerebro/casos_exemplo.json) |
+| **Integração e APIs** | Workflow n8n (Chat Trigger → Code) com estado por sessão; validação ao vivo de 13/13 checagens, 34–145 ms de resposta |
+
+---
+
 ## Estrutura
 
 ```
-car-claro/
+carminha-chatbot/
   cerebro/
     cerebro.js                # a lógica (fonte da verdade). Função pura processar(entrada, estado)
     catalogo_pendencias.json  # as pendências curadas (espelho dos dados em cerebro.js)
@@ -166,3 +189,17 @@ Outros casos prontos para demonstrar largura:
 
 > ⚠️ Os textos legais e prazos são **simplificações para a demo**. Antes de uso real,
 > revisar com base na Lei 12.651/2012 e nas regras do estado/bioma específicos.
+
+---
+
+## Autor
+
+**Breno Luiz Silva do Carmo**
+[LinkedIn](https://www.linkedin.com/in/breno-luiz-silva-do-carmo-19451a243/) ·
+[GitHub](https://github.com/Bren0-lz)
+
+## Licença
+
+Copyright (c) 2026 Breno Luiz Silva do Carmo. Todos os direitos reservados.
+Nenhuma parte deste código pode ser utilizada, reproduzida, distribuída ou modificada sem
+autorização prévia por escrito do autor. Veja [LICENSE](LICENSE).
